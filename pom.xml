@@ -33,12 +33,12 @@
     <repository>
       <id>starling-central</id>
       <name>Starling Releases</name>
-      <url>https://starlingbank.jfrog.io/starlingbank/libs-release-local</url>
+      <url>https://starlingbank.jfrog.io/starlingbank/ext-release-local</url>
     </repository>
     <snapshotRepository>
       <id>starling-snapshots</id>
       <name>Starling Snapshots</name>
-      <url>https://starlingbank.jfrog.io/starlingbank/libs-snapshot-local</url>
+      <url>https://starlingbank.jfrog.io/starlingbank/ext-snapshot-local</url>
     </snapshotRepository>
   </distributionManagement>
 
