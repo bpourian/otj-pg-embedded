@@ -29,7 +29,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.postgresql.Driver;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +158,7 @@ public class EmbeddedPostgres implements Closeable
         ds.setPortNumber(port);
         ds.setDatabaseName(dbName);
         ds.setUser(userName);
-        ds.setLogLevel(Driver.OFF);
+        ds.setLoggerLevel("OFF");
 
         properties.forEach((propertyKey, propertyValue) -> {
             try {
