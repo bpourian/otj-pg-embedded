@@ -27,11 +27,24 @@
     <developerConnection>scm:git:git@github.com:opentable/otj-pg-embedded.git</developerConnection>
     <url>http://github.com/opentable/otj-pg-embedded</url>
     <tag>HEAD</tag>
-  </scm>
+  </scm>i
+
+  <distributionManagement>
+    <repository>
+      <id>starling-central</id>
+      <name>Starling Releases</name>
+      <url>https://starlingbank.jfrog.io/starlingbank/libs-release-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>starling-snapshots</id>
+      <name>Starling Snapshots</name>
+      <url>https://starlingbank.jfrog.io/starlingbank/libs-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <groupId>com.opentable.components</groupId>
   <artifactId>otj-pg-embedded</artifactId>
-  <version>0.7.2-SNAPSHOT</version>
+  <version>0.7.2-STARLING</version>
   <description>Embedded PostgreSQL driver</description>
 
   <properties>

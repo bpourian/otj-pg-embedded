@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-VERSION=9.6.0-1
+VERSION=9.6.2-1
 
 RSRC_DIR=$PWD/target/generated-resources
 
@@ -13,9 +13,9 @@ OSX_DIST=dist/postgresql-$VERSION-osx-binaries.zip
 WINDOWS_DIST=dist/postgresql-$VERSION-win-binaries.zip
 
 mkdir -p dist/ target/generated-resources/
-[ -e $LINUX_DIST ] || wget -O $LINUX_DIST "http://get.enterprisedb.com/postgresql/postgresql-$VERSION-linux-x64-binaries.tar.gz"
-[ -e $OSX_DIST ] || wget -O $OSX_DIST "http://get.enterprisedb.com/postgresql/postgresql-$VERSION-osx-binaries.zip"
-[ -e $WINDOWS_DIST ] || wget -O $WINDOWS_DIST "http://get.enterprisedb.com/postgresql/postgresql-$VERSION-windows-x64-binaries.zip"
+[ -e $LINUX_DIST ] || wget -O $LINUX_DIST "https://get.enterprisedb.com/postgresql/postgresql-$VERSION-linux-x64-binaries.tar.gz"
+[ -e $OSX_DIST ] || wget -O $OSX_DIST "https://get.enterprisedb.com/postgresql/postgresql-$VERSION-osx-binaries.zip"
+[ -e $WINDOWS_DIST ] || wget -O $WINDOWS_DIST "https://get.enterprisedb.com/postgresql/postgresql-$VERSION-windows-x64-binaries.zip"
 
 tar xzf $LINUX_DIST -C $PACKDIR
 pushd $PACKDIR/pgsql
