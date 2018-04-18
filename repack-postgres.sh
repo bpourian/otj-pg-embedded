@@ -1,23 +1,67 @@
-#!/bin/bash -ex
-VERSION=9.6.2-1
+#!/bin/bash
 
+set -ex
+
+function install_pgtap()
+{
+  # We have to do this, rather than the "make && make install" approach, as that requires
+  # a build environment that matches the runtime environment; we need to cater for both
+  # macOS and Linux so we do this instead.
+  #
+  # Should you need to upgrade pgtap --- you'll need to figure out these inputs manually
+  # from the "make && make install". Sorry.
+
+  local source="$1"
+  local target="$2"
+
+  /usr/bin/install -d "$target/share/postgresql/extension" "$target/doc/postgresql/extension"
+
+  /usr/bin/install -c -m 644 \
+    "$source/pgtap.control" \
+    "$target/share/postgresql/extension/"
+
+  /usr/bin/install -c -m 644 \
+    "$source/sql/pgtap--0.90.0--0.91.0.sql" \
+    "$source/sql/pgtap--0.91.0--0.92.0.sql" \
+    "$source/sql/pgtap--0.92.0--0.93.0.sql" \
+    "$source/sql/pgtap--0.93.0--0.94.0.sql" \
+    "$source/sql/pgtap--0.94.0--0.95.0.sql" \
+    "$source/sql/pgtap--0.95.0--0.96.0.sql" \
+    "$source/sql/pgtap--0.96.0--0.97.0.sql" \
+    "$source/sql/pgtap--0.97.0--0.98.0.sql" \
+    "$source/sql/pgtap--0.98.0.sql" \
+    "$source/sql/pgtap--unpackaged--0.91.0.sql" \
+    "$source/sql/pgtap-core--0.98.0.sql" \
+    "$source/sql/pgtap-core.sql" \
+    "$source/sql/pgtap-schema--0.98.0.sql" \
+    "$source/sql/pgtap-schema.sql" \
+    "$source/sql/pgtap.sql" \
+    "$source/sql/uninstall_pgtap.sql" \
+    "$target/share/postgresql/extension/"
+
+  /usr/bin/install -c -m 644 \
+    "$source/doc/pgtap.mmd" \
+    "$target/doc/postgresql/extension/"
+}
+
+POSTGRES_VERSION="9.6.2-1"
 RSRC_DIR=$PWD/target/generated-resources
+PGTAP_DIR=$PWD/src/main/pgtap
 
 [ -e $RSRC_DIR/.repacked ] && echo "Already repacked, skipping..." && exit 0
 
 cd `dirname $0`
 
 PACKDIR=$(mktemp -d -t wat.XXXXXX)
-LINUX_DIST=dist/postgresql-$VERSION-linux-x64-binaries.tar.gz
-OSX_DIST=dist/postgresql-$VERSION-osx-binaries.zip
-WINDOWS_DIST=dist/postgresql-$VERSION-win-binaries.zip
+LINUX_DIST=dist/postgresql-$POSTGRES_VERSION-linux-x64-binaries.tar.gz
+OSX_DIST=dist/postgresql-$POSTGRES_VERSION-osx-binaries.zip
 
 mkdir -p dist/ target/generated-resources/
-[ -e $LINUX_DIST ] || wget -O $LINUX_DIST "https://get.enterprisedb.com/postgresql/postgresql-$VERSION-linux-x64-binaries.tar.gz"
-[ -e $OSX_DIST ] || wget -O $OSX_DIST "https://get.enterprisedb.com/postgresql/postgresql-$VERSION-osx-binaries.zip"
-[ -e $WINDOWS_DIST ] || wget -O $WINDOWS_DIST "https://get.enterprisedb.com/postgresql/postgresql-$VERSION-windows-x64-binaries.zip"
+[ -e $LINUX_DIST ] || wget -O $LINUX_DIST "https://get.enterprisedb.com/postgresql/postgresql-$POSTGRES_VERSION-linux-x64-binaries.tar.gz"
+[ -e $OSX_DIST ] || wget -O $OSX_DIST "https://get.enterprisedb.com/postgresql/postgresql-$POSTGRES_VERSION-osx-binaries.zip"
 
-tar xzf $LINUX_DIST -C $PACKDIR
+tar zxf $LINUX_DIST -C $PACKDIR
+install_pgtap "$PGTAP_DIR" "$PACKDIR/pgsql"
 pushd $PACKDIR/pgsql
 tar cJf $RSRC_DIR/postgresql-Linux-x86_64.txz \
   share/postgresql \
@@ -30,6 +74,7 @@ popd
 rm -fr $PACKDIR && mkdir -p $PACKDIR
 
 unzip -q -d $PACKDIR $OSX_DIST
+install_pgtap "$PGTAP_DIR" "$PACKDIR/pgsql"
 pushd $PACKDIR/pgsql
 tar cJf $RSRC_DIR/postgresql-Darwin-x86_64.txz \
   share/postgresql \
@@ -46,20 +91,6 @@ popd
 
 rm -fr $PACKDIR && mkdir -p $PACKDIR
 
-unzip -q -d $PACKDIR $WINDOWS_DIST
-pushd $PACKDIR/pgsql
-tar cJf $RSRC_DIR/postgresql-Windows-x86_64.txz \
-  share \
-  lib/iconv.lib \
-  lib/libxml2.lib \
-  lib/ssleay32.lib \
-  lib/ssleay32MD.lib \
-  lib/*.dll \
-  bin/initdb.exe \
-  bin/pg_ctl.exe \
-  bin/postgres.exe \
-  bin/*.dll
-popd
-
-rm -rf $PACKDIR
 touch $RSRC_DIR/.repacked
+
+exit 0
